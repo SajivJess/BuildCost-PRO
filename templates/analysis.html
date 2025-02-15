@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .gemini-analysis {
+            margin-top: 30px;
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .chat-container {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .chat-window {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f4f4f4;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        .user-message {
+            background: #d1e7dd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .bot-message {
+            background: #f8d7da;
+        }
+        .input-container {
+            display: flex;
+            margin-top: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Material Cost Analysis</h1>
+        <h2>Analysis Data</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantity</th>
+                    <th>Past Cost</th>
+                    <th>Current Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material, data in costs.items() %}
+                <tr>
+                    <td>{{ material }}</td>
+                    <td>{{ data.quantity }}</td>
+                    <td>{{ data.past_cost }}</td>
+                    <td>{{ data.current_cost }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Chat with Gemini AI</h2>
+        <div class="chat-container">
+            <div class="chat-window" id="chatWindow"></div>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Ask a what-if scenario...">
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById("chatWindow");
+        const userInput = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendButton");
+
+        function appendMessage(message, isUser = true) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isUser ? "user-message" : "bot-message"}`;
+            messageDiv.textContent = message;
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        sendButton.addEventListener("click", async () => {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Append user message
+            appendMessage(message, true);
+            userInput.value = "";
+
+            // Fetch response from the server
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message }),
+                });
+                const data = await response.json();
+
+                if (data.response) {
+                    appendMessage(data.response, false);
+                } else {
+                    appendMessage("Error: Could not get a response.", false);
+                }
+            } catch (error) {
+                appendMessage("Error: Unable to communicate with the server.", false);
+            }
+        });
+
+        // Send message on Enter key press
+        userInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

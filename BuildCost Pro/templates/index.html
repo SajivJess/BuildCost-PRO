@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BuildCost Pro - Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa; /* Sky blue background */
+      color: #01579b; /* Dark blue text */
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #0288d1;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 50px;
+    }
+
+    .button {
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0277bd;
+    }
+
+    footer {
+      background-color: #0288d1;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to BuildCost Pro</h1>
+    <p>Your solution for accurate and real-time material cost predictions</p>
+  </header>
+
+  <div class="container">
+    <h2>What would you like to do?</h2>
+    <a href="/MaterialAnalysis" class="button">Real-Time Cost Prediction</a>
+    <form method="GET" action="/fetch-prices" target="_blank" style="display: inline;">
+      <button type="submit" class="button">Fetch Real-Time Prices</button>
+    </form>
+    <!-- New Button for Comparison -->
+    <a href="/comparision" class="button">View Material Cost Comparison</a>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 BuildCost Pro. All rights reserved.</p>
+  </footer>
+</body>
+</html>

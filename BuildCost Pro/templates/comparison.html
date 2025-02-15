@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Cost Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        table th, table td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #f4f4f4;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Material Cost Comparison</h1>
+    </header>
+
+    <div class="container">
+        <h2>Real-Time vs Historical Costs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Real-Time Cost (₹)</th>
+                    <th>Historical Cost (₹)</th>
+                    <th>Difference (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in comparison %}
+                <tr>
+                    <td>{{ item.material }}</td>
+                    <td>₹{{ item.real_time_cost }}</td>
+                    <td>₹{{ item.historical_cost }}</td>
+                    <td class="highlight">₹{{ item.difference }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Calculation Details</h2>
+        <h3>Real-Time Costs</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantity</th>
+                    <th>Unit Price (₹)</th>
+                    <th>Total Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in real_time_costs %}
+                <tr>
+                    <td>{{ item.material }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td>₹{{ item.total_cost }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Historical Costs</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantity</th>
+                    <th>Unit Price (₹)</th>
+                    <th>Total Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in historical_costs %}
+                <tr>
+                    <td>{{ item.material }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td>₹{{ item.total_cost }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

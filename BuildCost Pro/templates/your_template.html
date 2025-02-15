@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFC Material Quantities</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload IFC File</h1>
+    <form action="/MaterialAnalysis" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".ifc">
+        <button type="submit">Upload and Analyze</button>
+    </form>
+    <div id="results"></div>
+    <script>
+        document.querySelector("form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch("/MaterialAnalysis", { method: "POST", body: formData });
+            const data = await response.json();
+    
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+    
+            if (data.error) {
+                resultsDiv.textContent = data.error;
+                return;
+            }
+    
+            // Create a table
+            const table = document.createElement("table");
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.border = "1";
+    
+            // Add table header
+            const headerRow = document.createElement("tr");
+            headerRow.innerHTML = `
+                <th style="border: 1px solid black; padding: 8px;">Material</th>
+                <th style="border: 1px solid black; padding: 8px;">Description</th>
+            `;
+            table.appendChild(headerRow);
+    
+            // Add table rows for each material
+            data.forEach(item => {
+                const row = document.createElement("tr");
+    
+                const materialCell = document.createElement("td");
+                materialCell.style.border = "1px solid black";
+                materialCell.style.padding = "8px";
+                materialCell.textContent = item.material.toUpperCase();
+    
+                const descriptionCell = document.createElement("td");
+                descriptionCell.style.border = "1px solid black";
+                descriptionCell.style.padding = "8px";
+    
+                // Format description as a nested table
+                const descriptionTable = document.createElement("table");
+                descriptionTable.style.width = "100%";
+                descriptionTable.style.borderCollapse = "collapse";
+                descriptionTable.border = "1";
+    
+                Object.entries(item.description).forEach(([key, value]) => {
+                    const descRow = document.createElement("tr");
+    
+                    const keyCell = document.createElement("td");
+                    keyCell.style.border = "1px solid black";
+                    keyCell.style.padding = "4px";
+                    keyCell.textContent = key.replace(/_/g, " ").toUpperCase();
+    
+                    const valueCell = document.createElement("td");
+                    valueCell.style.border = "1px solid black";
+                    valueCell.style.padding = "4px";
+                    valueCell.textContent = value;
+    
+                    descRow.appendChild(keyCell);
+                    descRow.appendChild(valueCell);
+                    descriptionTable.appendChild(descRow);
+                });
+    
+                descriptionCell.appendChild(descriptionTable);
+                row.appendChild(materialCell);
+                row.appendChild(descriptionCell);
+                table.appendChild(row);
+            });
+    
+            resultsDiv.appendChild(table);
+        });
+    </script>
+    
+</body>
+</html>

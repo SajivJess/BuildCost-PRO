@@ -1,0 +1,210 @@
+<html><head>
+  <title>Real-Time Material Prices</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa; /* Sky blue background */
+      color: #01579b; /* Dark blue text */
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #0288d1;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 900px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #0288d1;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+      background-color: #d9edf7;
+    }
+
+    .button {
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0277bd;
+    }
+
+    footer {
+      background-color: #0288d1;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      color: #01579b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Real-Time Material Prices</h1>
+    <p>Accurate and real-time pricing for construction materials</p>
+  </header>
+
+  <div class="container">
+    <h2>Sand Prices</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Price (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="sand-prices">
+      </tbody>
+    </table>
+
+    <h2>Stone Prices</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Price (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="jalli-prices">
+      </tbody>
+    </table>
+
+    <h2>Brick Prices</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Price (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="brick-prices">
+      </tbody>
+    </table>
+
+    <a href="/" class="button">Back to Home</a>
+  </div>
+
+  
+  
+
+  <footer>
+    <p>© 2025 BuildCost Pro. All rights reserved.</p>
+  </footer>
+
+  <script>
+    async function fetchPrices() {
+  try {
+    // Fetch JSON data from the API
+    const response = await fetch('/fetch-prices-api');
+    const data = await response.json();
+
+    const sandPricesElement = document.getElementById('sand-prices');
+    const jalliPricesElement = document.getElementById('jalli-prices');
+    const brickPricesElement = document.getElementById('brick-prices');
+
+    let sandHtml = '';
+    let jalliHtml = '';
+    let brickHtml = '';
+
+    if (data.error) {
+      const errorHtml = `<tr><td colspan="2" style="text-align: center; color: red;">${data.error}</td></tr>`;
+      sandPricesElement.innerHTML = errorHtml;
+      jalliPricesElement.innerHTML = errorHtml;
+      brickPricesElement.innerHTML = errorHtml;
+    } else {
+      for (const category in data) {
+        const materials = data[category];
+        for (const material in materials) {
+          // Skip specific items
+          if (['bricks', 'jalli 21mm (karungal)', 'm sand', 'p sand', 'sand'].includes(material.toLowerCase())) {
+            continue;
+          }
+
+          const price = materials[material];
+          const rowHtml = `
+            <tr>
+              <td>${material.charAt(0).toUpperCase() + material.slice(1)}</td>
+              <td>${price ? `₹${price.toFixed(2)}` : 'N/A'}</td>
+            </tr>`;
+
+          // Append the row to the correct category
+          if (category.includes('Sand')) {
+            sandHtml += rowHtml;
+          } else if (category.includes('Jalli')) {
+            jalliHtml += rowHtml;
+          } else if (category.includes('Brick')) {
+            brickHtml += rowHtml;
+          }
+        }
+      }
+    }
+
+    // Populate the table content
+    sandPricesElement.innerHTML = sandHtml;
+    jalliPricesElement.innerHTML = jalliHtml;
+    brickPricesElement.innerHTML = brickHtml;
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    const errorHtml = `
+      <tr>
+        <td colspan="2" style="text-align: center; color: red;">Failed to fetch data. Please try again later.</td>
+      </tr>`;
+    document.getElementById('sand-prices').innerHTML = errorHtml;
+    document.getElementById('jalli-prices').innerHTML = errorHtml;
+    document.getElementById('brick-prices').innerHTML = errorHtml;
+  }
+}
+
+// Fetch prices when the page loads
+window.onload = fetchPrices;
+  </script>
+
+
+</body></html>
